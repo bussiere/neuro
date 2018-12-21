@@ -8,8 +8,8 @@ import (
 // included in the TTP transport's "tensors" field. The target specifices
 // which operation's to run and which feeds to return. Targets are registered
 // with the RegisterTarget function. Registered Targets automatically validate
-// input tensor shapes/data types.
-func (m *Model) Run(transport ttp.Transport) {
+// input tensor aliases/dimensions/types.
+func (s *Session) Run(transport ttp.Transport) {
 	// batchTensor, err := tf.NewTensor(batch)
 	// if err != nil {
 	// 	panic(err)

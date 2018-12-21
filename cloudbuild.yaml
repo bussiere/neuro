@@ -1,0 +1,8 @@
+# CLOUD BUILD TESTING
+steps:
+# SEE TFLIB.DOCKERFILE FOR IMAGE DETAILS (INSTALLS TF C LIB)
+- name: 'gcr.io/tensortask/go-tf-c-lib:v0.1.1'
+  entrypoint: 'go'
+  args: ['test', './...']
+  env: ['GO111MODULE=on']
+  env: ['PROJECT_ROOT=neuro']

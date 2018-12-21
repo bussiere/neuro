@@ -10,8 +10,8 @@ import (
 
 // Checkpoint saves a model's state to checkpoint file(s). This operation
 // automatically increments the checkpoint index.
-func (m *Model) Checkpoint() error {
-	checkpointPath, err := filepath.Abs(filepath.Join(m.checkpointDirectory, m.checkpointPrefix))
+func (s *Session) Checkpoint() error {
+	checkpointPath, err := filepath.Abs(filepath.Join(s.model.checkpointDirectory, s.model.checkpointPrefix))
 	if err != nil {
 		return err
 	}
@@ -20,21 +20,21 @@ func (m *Model) Checkpoint() error {
 		return err
 	}
 	feeds := map[tf.Output]*tf.Tensor{
-		m.checkpointPlaceholder: checkpointTensor,
+		s.model.checkpointPlaceholder: checkpointTensor,
 	}
-	if _, err := m.sess.Run(feeds, nil, []*tf.Operation{m.checkpointOp}); err != nil {
+	if _, err := s.sess.Run(feeds, nil, []*tf.Operation{s.model.checkpointOp}); err != nil {
 		return err
 	}
 	return nil
 }
 
 // Restore loads a models state from the latest checkpoint.
-func (m *Model) Restore() error {
-	_, err := os.Stat(m.checkpointDirectory)
+func (s *Session) Restore() error {
+	_, err := os.Stat(s.model.checkpointDirectory)
 	if os.IsNotExist(err) {
-		return fmt.Errorf("checkpoint directory '%s' does not exist", m.checkpointDirectory)
+		return fmt.Errorf("checkpoint directory '%s' does not exist", s.model.checkpointDirectory)
 	}
-	checkpointPath, err := filepath.Abs(filepath.Join(m.checkpointDirectory, m.checkpointPrefix))
+	checkpointPath, err := filepath.Abs(filepath.Join(s.model.checkpointDirectory, s.model.checkpointPrefix))
 	if err != nil {
 		return err
 	}
@@ -43,10 +43,21 @@ func (m *Model) Restore() error {
 		return err
 	}
 	feeds := map[tf.Output]*tf.Tensor{
-		m.checkpointPlaceholder: checkpointTensor,
+		s.model.checkpointPlaceholder: checkpointTensor,
 	}
-	if _, err := m.sess.Run(feeds, nil, []*tf.Operation{m.restoreOp}); err != nil {
+	if _, err := s.sess.Run(feeds, nil, []*tf.Operation{s.model.restoreOp}); err != nil {
 		return err
 	}
 	return nil
+}
+
+// Start is a convenience function that either restores a model
+// from the latest checkpoint if the checkpoint directory exists
+// or initializes the model's variables using the init method.
+func (s *Session) Start() error {
+	_, err := os.Stat(s.model.checkpointDirectory)
+	if os.IsNotExist(err) {
+		return s.Init()
+	}
+	return s.Restore()
 }

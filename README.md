@@ -58,7 +58,7 @@ System Integrity Protection (SIP) is a security feature of macOS originally intr
 
 ##### Disabling SIP
 
-1) Boot into recovery mode (hold Command-R on start up).
-2) Enter terminal (in recovery mode).
-3) Enter `csrutil disable; reboot`.
+1) Boot into recovery mode (hold Command-R on start up)
+2) Enter terminal (in recovery mode)
+3) Enter `csrutil disable; reboot`
 4) Unzip C library tar into `/usr/local`

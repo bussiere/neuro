@@ -20,7 +20,7 @@
 [11]: https://www.tensorflow.org/install/lang_go
 [12]: https://www.tensorflow.org/install/lang_c
 
-# 🧠Neuro: TensorFlow In Go. Simplified.
+# 🧠 Neuro: TensorFlow In Go. Simplified.
 
 ```diff
 - #############################

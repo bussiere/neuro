@@ -9,20 +9,26 @@ import (
 // Model holds the tensorflow graph, session, variable initalization op,
 // checkpoint details, restore op, and registered targets.
 type Model struct {
+	graphPath             string
 	graph                 *tf.Graph
-	sess                  *tf.Session
 	initOp                *tf.Operation
 	checkpointDirectory   string
 	checkpointPrefix      string
 	checkpointPlaceholder tf.Output
 	checkpointOp          *tf.Operation
 	restoreOp             *tf.Operation
-	targets               map[string]Target
+	targets               map[string]target
+}
+
+// Session ...
+type Session struct {
+	model Model
+	sess  *tf.Session
 }
 
 // NewModel loads a saved TF graph definition (graph.pb)
 // and initializes a new TensorFlow session.
-func NewModel(graphDefFilePath string, options ...func(*Model)) (*Model, error) {
+func NewModel(graphDefFilePath string, targets []Target, options ...func(*Model)) (*Model, error) {
 	graphDef, err := ioutil.ReadFile(graphDefFilePath)
 	if err != nil {
 		return nil, err
@@ -31,13 +37,10 @@ func NewModel(graphDefFilePath string, options ...func(*Model)) (*Model, error) 
 	if err = graph.Import(graphDef, ""); err != nil {
 		return nil, err
 	}
-	sess, err := tf.NewSession(graph, nil)
-	if err != nil {
-		return nil, err
-	}
+	// register targets here
 	model := &Model{
+		graphPath:             graphDefFilePath,
 		graph:                 graph,
-		sess:                  sess,
 		initOp:                graph.Operation(DefaultInitOpName),
 		checkpointOp:          graph.Operation(DefaultSaveOpName),
 		restoreOp:             graph.Operation(DefaultRestoreOpName),
@@ -51,9 +54,21 @@ func NewModel(graphDefFilePath string, options ...func(*Model)) (*Model, error) 
 	return model, nil
 }
 
+// NewSession ....
+func (m *Model) NewSession(options *tf.SessionOptions) (*Session, error) {
+	sess, err := tf.NewSession(m.graph, options)
+	if err != nil {
+		return nil, err
+	}
+	return &Session{
+		sess:  sess,
+		model: *m,
+	}, nil
+}
+
 // Init initializes a model's variables by calling the variable init op.
-func (m *Model) Init() error {
-	if _, err := m.sess.Run(nil, nil, []*tf.Operation{m.initOp}); err != nil {
+func (s *Session) Init() error {
+	if _, err := s.sess.Run(nil, nil, []*tf.Operation{s.model.initOp}); err != nil {
 		return err
 	}
 	return nil

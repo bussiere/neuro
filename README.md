@@ -53,13 +53,12 @@ The Golang package depends on the TensorFlow C library. Install instructions can
 
 System Integrity Protection (SIP) is a security feature of macOS originally introduced in OS X El Capitan. SIP disables write access to system level directories. In order install the TensorFlow C library, you must either install the library to a different location and update the linker or disable SIP.
 
+##### Custom Directory + Updated Linker
 `export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:~/customTensorFlowInstallDir/lib`
 
-or
+##### Disabling SIP
 
-1) Boot into recovery mode (hold Command-R on start up)
-2) Enter terminal (in recovery mode)
-3) type `csrutil disable; reboot`
-
-
-
+1) Boot into recovery mode (hold Command-R on start up).
+2) Enter terminal (in recovery mode).
+3) Enter `csrutil disable; reboot`.
+4) Unzip C library tar into `/usr/local`

@@ -1,4 +1,4 @@
-package pia
+package neuro
 
 const (
 	// DefaultInitOpName is the default operation name to initialize

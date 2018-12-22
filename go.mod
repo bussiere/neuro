@@ -1,4 +1,4 @@
-module github.com/tensortask/pia
+module github.com/tensortask/neuro
 
 require (
 	github.com/gogo/protobuf v1.2.0

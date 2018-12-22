@@ -1,4 +1,4 @@
-package pia_test
+package neuro_test
 
 import (
 	"fmt"

@@ -2,6 +2,8 @@ github.com/gogo/protobuf v1.2.0 h1:xU6/SpYbvkNYiptHJYEDRseDLvYE7wSqhYYNy0QSUzI=
 github.com/gogo/protobuf v1.2.0/go.mod h1:r8qH/GZQm5c6nD/R0oafs1akxWv10x8SbQlK7atdtwQ=
 github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+github.com/google/pprof v0.0.0-20181206194817-3ea8567a2e57 h1:eqyIo2HjKhKe/mJzTG8n4VqvLXIOEG+SLdDqX7xGtkY=
+github.com/google/pprof v0.0.0-20181206194817-3ea8567a2e57/go.mod h1:zfwlbNMJ+OItoe0UupaVj+oy1omPYYDuagoSzA8v9mc=
 github.com/rs/zerolog v1.11.0/go.mod h1:YbFCdg8HfsridGWAh22vktObvhZbQsZXe4/zB0OKkWU=
 github.com/tensorflow/tensorflow v1.12.0 h1:fT4okrN4BkpgotWmDwS56wM6BdkRpTL0lLMzvkM+bLo=
 github.com/tensorflow/tensorflow v1.12.0/go.mod h1:itOSERT4trABok4UOoG+X4BoKds9F3rIsySdn+Lvu90=
@@ -9,3 +11,5 @@ github.com/tensortask/tfprotos v0.0.0-20181108230824-bd85bd34c8c6 h1:JGhG3A7Ex1m
 github.com/tensortask/tfprotos v0.0.0-20181108230824-bd85bd34c8c6/go.mod h1:osQLzA379MX16KhDzoJO8TEEsOBWY3o23czYxSktrMU=
 github.com/tensortask/ttp v0.1.1 h1:k507obgHY8ekYeJslUYKdLYcy9L6ffMAop8ZSt47VQg=
 github.com/tensortask/ttp v0.1.1/go.mod h1:11Jx17ZNMkxSvHuphQjZFIbbZpTKc4m188qzXfmlGIc=
+golang.org/x/arch v0.0.0-20181203225421-5a4828bb7045 h1:Pn8fQdvx+z1avAi7fdM2kRYWQNxGlavNDSyzrQg2SsU=
+golang.org/x/arch v0.0.0-20181203225421-5a4828bb7045/go.mod h1:cYlCBUl1MsqxdiKgmc4uh7TxZfWSFLOGSRR090WDxt8=

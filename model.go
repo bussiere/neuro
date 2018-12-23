@@ -28,7 +28,7 @@ type Session struct {
 
 // NewModel loads a saved TF graph definition (graph.pb)
 // and initializes a new TensorFlow session.
-func NewModel(graphDefFilePath string, targets []Target, options ...func(*Model)) (*Model, error) {
+func NewModel(graphDefFilePath string, options ...func(*Model)) (*Model, error) {
 	graphDef, err := ioutil.ReadFile(graphDefFilePath)
 	if err != nil {
 		return nil, err
@@ -47,6 +47,7 @@ func NewModel(graphDefFilePath string, targets []Target, options ...func(*Model)
 		checkpointDirectory:   DefaultCheckpointDirectory,
 		checkpointPrefix:      DefaultCheckpointFilePrefix,
 		checkpointPlaceholder: graph.Operation(DefaultCheckpointPlaceholderName).Output(0),
+		targets:               make(map[string]target),
 	}
 	for _, option := range options {
 		option(model)
@@ -55,8 +56,8 @@ func NewModel(graphDefFilePath string, targets []Target, options ...func(*Model)
 }
 
 // NewSession ....
-func (m *Model) NewSession(options *tf.SessionOptions) (*Session, error) {
-	sess, err := tf.NewSession(m.graph, options)
+func (m *Model) NewSession() (*Session, error) {
+	sess, err := tf.NewSession(m.graph, &tf.SessionOptions{})
 	if err != nil {
 		return nil, err
 	}

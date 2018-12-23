@@ -2,6 +2,7 @@ package neuro
 
 import (
 	"fmt"
+	"io/ioutil"
 	"strconv"
 	"strings"
 
@@ -35,6 +36,42 @@ type Output struct {
 // RegisterTargets registers a target computation for
 // the given TensorFlow model.
 func (m *Model) RegisterTargets(targets ...Target) error {
+	nodeList := consolidateTargetNodes(targets...)
+	graphDef, err := ioutil.ReadFile(m.graphPath)
+	if err != nil {
+		return err
+	}
+	nodeMap, err := parseGraphDef(nodeList, &graphDef)
+	if err != nil {
+		return err
+	}
+
+	for _, inputTarget := range targets {
+		t := target{
+			name:    inputTarget.Name,
+			feeds:   make(map[string]Output),
+			fetches: make(map[string]Output),
+		}
+		ops, err := m.makeTFOperations(inputTarget.Operations, nodeMap)
+		if err != nil {
+			return err
+		}
+		t.operations = ops
+
+		feeds, err := m.makeTFOutputs(inputTarget.Feeds, nodeMap)
+		if err != nil {
+			return err
+		}
+		t.feeds = feeds
+
+		fetches, err := m.makeTFOutputs(inputTarget.Fetches, nodeMap)
+		if err != nil {
+			return err
+		}
+		t.fetches = fetches
+		m.targets[inputTarget.Name] = t
+
+	}
 	return nil
 }
 
@@ -50,7 +87,7 @@ func parseGraphDef(nodeNames []string, graphDef *[]byte) (map[string]*framework.
 		return nil, err
 	}
 	nodes := graphProto.GetNode()
-	var nodeMap map[string]*framework.NodeDef
+	nodeMap := make(map[string]*framework.NodeDef)
 
 	for _, node := range nodes {
 		if nameIsPresent(node.Name, nodeNames) {
@@ -60,20 +97,20 @@ func parseGraphDef(nodeNames []string, graphDef *[]byte) (map[string]*framework.
 	return nodeMap, nil
 }
 
-func (m *Model) makeTFOperations(operationNames []string, nodeMap map[string]*framework.NodeDef) (map[string]*tf.Operation, error) {
-	var operationMap map[string]*tf.Operation
+func (m *Model) makeTFOperations(operationNames []string, nodeMap map[string]*framework.NodeDef) ([]*tf.Operation, error) {
+	var operationSlice []*tf.Operation
 	for _, operationName := range operationNames {
 		if nodeMap[operationName] != nil {
-			operationMap[operationName] = m.graph.Operation(operationName)
+			operationSlice = append(operationSlice, m.graph.Operation(operationName))
 		} else {
 			return nil, fmt.Errorf("operation '%s' is not present in graph '%s'", operationName, m.graphPath)
 		}
 	}
-	return operationMap, nil
+	return operationSlice, nil
 }
 
 func (m *Model) makeTFOutputs(outputNames []string, nodeMap map[string]*framework.NodeDef) (map[string]Output, error) {
-	var outputMap map[string]Output
+	outputMap := make(map[string]Output)
 	for _, outputName := range outputNames {
 		node := nodeMap[outputName]
 		if node != nil {
@@ -118,4 +155,30 @@ func getOutputFromName(outputName string) (string, int, error) {
 		return s[0], index, nil
 	}
 	return "", 0, fmt.Errorf("output name %s should include a maximum of one colon", outputName)
+}
+
+func consolidateTargetNodes(targets ...Target) []string {
+	var nodeList []string
+	for _, target := range targets {
+		nodeList = append(nodeList, target.Feeds...)
+		nodeList = append(nodeList, target.Fetches...)
+		nodeList = append(nodeList, target.Operations...)
+	}
+	return removeDuplicatesUnordered(nodeList)
+}
+
+func removeDuplicatesUnordered(elements []string) []string {
+	encountered := map[string]bool{}
+
+	// Create a map of all unique elements.
+	for v := range elements {
+		encountered[elements[v]] = true
+	}
+
+	// Place all keys from the map into a slice.
+	result := []string{}
+	for key := range encountered {
+		result = append(result, key)
+	}
+	return result
 }

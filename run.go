@@ -1,6 +1,7 @@
 package neuro
 
 import (
+	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	ttp "github.com/tensortask/ttp/gen"
 )
 
@@ -9,20 +10,25 @@ import (
 // which operation's to run and which feeds to return. Targets are registered
 // with the RegisterTarget function. Registered Targets automatically validate
 // input tensor aliases/dimensions/types.
-func (s *Session) Run(transport ttp.Transport) {
-	// batchTensor, err := tf.NewTensor(batch)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// feeds := map[tf.Output]*tf.Tensor{m.input: batchTensor}
-	// fetches := []tf.Output{m.output}
-	// results, err := m.sess.Run(feeds, fetches, nil)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fetched := results[0].Value().([][][]float32)
-	// fmt.Println("Predictions:")
-	// for i := range batch {
-	// 	fmt.Printf("\tx = %v, predicted y = %v\n", batch[i], fetched[i])
-	// }
+func (s *Session) Run(transport ttp.Transport) (ttp.Transport, error) {
+	feeds, fetches, operations, err := s.model.convertTransportToTF(transport)
+	if err != nil {
+		return ttp.Transport{}, err
+	}
+	// unwrap the fetches
+	var tfFetches []tf.Output
+	var fetchOrder []string
+	for k, v := range fetches {
+		tfFetches = append(tfFetches, v.graphOutput)
+		fetchOrder = append(fetchOrder, k)
+	}
+	results, err := s.sess.Run(feeds, tfFetches, operations)
+	if err != nil {
+		return ttp.Transport{}, err
+	}
+	returnTransport, err := convertTFToTransport(fetchOrder, results)
+	if err != nil {
+		return ttp.Transport{}, err
+	}
+	return returnTransport, nil
 }

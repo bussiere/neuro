@@ -20,9 +20,9 @@ type Target struct {
 
 type target struct {
 	name       string
-	feeds      map[string]*Output
-	fetches    map[string]*Output
-	operations map[string]*tf.Operation
+	feeds      map[string]Output
+	fetches    map[string]Output
+	operations []*tf.Operation
 }
 
 // Output ...
@@ -72,8 +72,8 @@ func (m *Model) makeTFOperations(operationNames []string, nodeMap map[string]*fr
 	return operationMap, nil
 }
 
-func (m *Model) makeTFOutputs(outputNames []string, nodeMap map[string]*framework.NodeDef) (map[string]*Output, error) {
-	var outputMap map[string]*Output
+func (m *Model) makeTFOutputs(outputNames []string, nodeMap map[string]*framework.NodeDef) (map[string]Output, error) {
+	var outputMap map[string]Output
 	for _, outputName := range outputNames {
 		node := nodeMap[outputName]
 		if node != nil {
@@ -87,7 +87,7 @@ func (m *Model) makeTFOutputs(outputNames []string, nodeMap map[string]*framewor
 			for _, size := range node.Attr["shape"].GetShape().GetDim() {
 				output.dim = append(output.dim, size.GetSize())
 			}
-			outputMap[outputName] = &output
+			outputMap[outputName] = output
 		} else {
 			return nil, fmt.Errorf("ouput '%s' is not present in graph '%s'", outputName, m.graphPath)
 		}

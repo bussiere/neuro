@@ -12,7 +12,7 @@ import (
 func (m Model) convertTransportToTF(transport ttp.Transport) (map[tf.Output]*tf.Tensor, map[string]Output, []*tf.Operation, error) {
 	target := m.targets[transport.Target]
 	tensors := transport.Tensors
-	var feeds map[tf.Output]*tf.Tensor
+	feeds := make(map[tf.Output]*tf.Tensor)
 	for alias, tensor := range tensors {
 		output, ok := target.feeds[alias]
 		if !ok {
@@ -36,7 +36,9 @@ func convertTFToTransport(order []string, tensors []*tf.Tensor) (ttp.Transport, 
 	if len(order) != len(tensors) {
 		return ttp.Transport{}, fmt.Errorf("length of order does not match the supplied tensors to convert to TTP")
 	}
-	var transport ttp.Transport
+	transport := ttp.Transport{
+		Tensors: make(map[string]*ttp.Tensor),
+	}
 
 	for index, alias := range order {
 		ttpType, err := tfTypeToTtp(tensors[index].DataType())

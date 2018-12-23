@@ -61,4 +61,6 @@ System Integrity Protection (SIP) is a security feature of macOS originally intr
 1) Boot into recovery mode (hold Command-R on start up)
 2) Enter terminal (in recovery mode)
 3) Enter `csrutil disable; reboot`
-4) Unzip C library tar into `/usr/local`
+4) Unzip tf C library tar into `/usr/local`
+
+e.g. `curl -L https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-..<VERSION>.tar.gz | sudo tar -C /usr/local -xz`

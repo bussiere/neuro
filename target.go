@@ -11,7 +11,9 @@ import (
 	"github.com/tensortask/tfprotos/core/framework"
 )
 
-// Target ...
+// Target contains the lists of names required to parse out
+// TensorFlow outputs and operations from the graph definition.
+// Target must have a name.
 type Target struct {
 	Name       string
 	Feeds      []string
@@ -21,13 +23,12 @@ type Target struct {
 
 type target struct {
 	name       string
-	feeds      map[string]Output
-	fetches    map[string]Output
+	feeds      map[string]output
+	fetches    map[string]output
 	operations []*tf.Operation
 }
 
-// Output ...
-type Output struct {
+type output struct {
 	graphOutput tf.Output
 	dataType    string
 	dim         []int64
@@ -36,7 +37,7 @@ type Output struct {
 // RegisterTargets registers a target computation for
 // the given TensorFlow model.
 func (m *Model) RegisterTargets(targets ...Target) error {
-	nodeList := consolidateTargetNodes(targets...)
+	nodeList := consolidateTargetNodeNames(targets...)
 	graphDef, err := ioutil.ReadFile(m.graphPath)
 	if err != nil {
 		return err
@@ -49,8 +50,8 @@ func (m *Model) RegisterTargets(targets ...Target) error {
 	for _, inputTarget := range targets {
 		t := target{
 			name:    inputTarget.Name,
-			feeds:   make(map[string]Output),
-			fetches: make(map[string]Output),
+			feeds:   make(map[string]output),
+			fetches: make(map[string]output),
 		}
 		ops, err := m.makeTFOperations(inputTarget.Operations, nodeMap)
 		if err != nil {
@@ -109,12 +110,12 @@ func (m *Model) makeTFOperations(operationNames []string, nodeMap map[string]*fr
 	return operationSlice, nil
 }
 
-func (m *Model) makeTFOutputs(outputNames []string, nodeMap map[string]*framework.NodeDef) (map[string]Output, error) {
-	outputMap := make(map[string]Output)
+func (m *Model) makeTFOutputs(outputNames []string, nodeMap map[string]*framework.NodeDef) (map[string]output, error) {
+	outputMap := make(map[string]output)
 	for _, outputName := range outputNames {
 		node := nodeMap[outputName]
 		if node != nil {
-			output := Output{}
+			output := output{}
 			operationName, outputIndex, err := getOutputFromName(outputName)
 			if err != nil {
 				return nil, err
@@ -157,7 +158,7 @@ func getOutputFromName(outputName string) (string, int, error) {
 	return "", 0, fmt.Errorf("output name %s should include a maximum of one colon", outputName)
 }
 
-func consolidateTargetNodes(targets ...Target) []string {
+func consolidateTargetNodeNames(targets ...Target) []string {
 	var nodeList []string
 	for _, target := range targets {
 		nodeList = append(nodeList, target.Feeds...)

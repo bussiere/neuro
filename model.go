@@ -20,15 +20,9 @@ type Model struct {
 	targets               map[string]target
 }
 
-// Session ...
-type Session struct {
-	model Model
-	sess  *tf.Session
-}
-
 // NewModel loads a saved TF graph definition (graph.pb)
 // and initializes a new TensorFlow session.
-func NewModel(graphDefFilePath string, options ...func(*Model)) (*Model, error) {
+func NewModel(graphDefFilePath string, options ...func(*Model) error) (*Model, error) {
 	graphDef, err := ioutil.ReadFile(graphDefFilePath)
 	if err != nil {
 		return nil, err
@@ -50,36 +44,65 @@ func NewModel(graphDefFilePath string, options ...func(*Model)) (*Model, error) 
 		targets:               make(map[string]target),
 	}
 	for _, option := range options {
-		option(model)
+		err := option(model)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return model, nil
 }
 
-// NewSession ....
-func (m *Model) NewSession() (*Session, error) {
-	sess, err := tf.NewSession(m.graph, &tf.SessionOptions{})
-	if err != nil {
-		return nil, err
+///////////////////////////////////////////////////////////////////////////////
+// NewModel Override Functions
+///////////////////////////////////////////////////////////////////////////////
+
+// InitOp overrides the default variable initialization operation name "init".
+// Pass an operation name into the function.
+func InitOp(name string) func(*Model) error {
+	return func(m *Model) error {
+		m.initOp = m.graph.Operation(name)
+		return nil
 	}
-	return &Session{
-		sess:  sess,
-		model: *m,
-	}, nil
 }
 
-// Init initializes a model's variables by calling the variable init op.
-func (s *Session) Init() error {
-	if _, err := s.sess.Run(nil, nil, []*tf.Operation{s.model.initOp}); err != nil {
-		return err
+// CheckpointOp overrides the default variable checkpoint operation.
+// The default is: "save/control_dependency". Pass an operation name
+// into the function.
+func CheckpointOp(name string) func(*Model) error {
+	return func(m *Model) error {
+		m.checkpointOp = m.graph.Operation(name)
+		return nil
 	}
-	return nil
+}
+
+// RestoreOp overrides the default restore operation. The default
+// is: "save/restore_all". Pass an operation name into the function.
+func RestoreOp(name string) func(*Model) error {
+	return func(m *Model) error {
+		m.restoreOp = m.graph.Operation(name)
+		return nil
+	}
+}
+
+// CheckpointPlaceholder overrides the default checkpoint
+// prefix placeholder. Default is: "save/Const".
+func CheckpointPlaceholder(name string) func(*Model) error {
+	return func(m *Model) error {
+		opName, outputNumber, err := getOutputFromName(name)
+		if err != nil {
+			return err
+		}
+		m.checkpointPlaceholder = m.graph.Operation(opName).Output(outputNumber)
+		return nil
+	}
 }
 
 // CheckpointPath overrides the default model checkpoint directory
-// and prefix. Include this in a new model call.
-func CheckpointPath(directory string, prefix string) func(*Model) {
-	return func(m *Model) {
+// and prefix.
+func CheckpointPath(directory string, prefix string) func(*Model) error {
+	return func(m *Model) error {
 		m.checkpointDirectory = directory
 		m.checkpointPrefix = prefix
+		return nil
 	}
 }

@@ -5,7 +5,10 @@ import (
 	ttp "github.com/tensortask/ttp/gen"
 )
 
-// PackTransport ...
+// PackTransport takes a target and a map of aliases and native types
+// and first converts them to a tensorflow tensor and then packs that into
+// a TTP transport. Useful for working directly with golang native types.
+// NOTE: the type must be serializable by the tensorflow package (numerical).
 func PackTransport(target string, tensors map[string]interface{}) (ttp.Transport, error) {
 	var aliases []string
 	var tfTensors []*tf.Tensor

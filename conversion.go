@@ -9,7 +9,10 @@ import (
 	ttp "github.com/tensortask/ttp/gen"
 )
 
-func (m Model) convertTransportToTF(transport ttp.Transport) (map[tf.Output]*tf.Tensor, map[string]Output, []*tf.Operation, error) {
+// convertTransportToTF takes a TTP transport and returns maps containing
+// the input data read into tf.Tensors. The fetches are in the format of
+// a [string]Output map to help with repacking the transports upon processing.
+func (m Model) convertTransportToTF(transport ttp.Transport) (map[tf.Output]*tf.Tensor, map[string]output, []*tf.Operation, error) {
 	target := m.targets[transport.Target]
 	tensors := transport.Tensors
 	feeds := make(map[tf.Output]*tf.Tensor)
@@ -32,6 +35,8 @@ func (m Model) convertTransportToTF(transport ttp.Transport) (map[tf.Output]*tf.
 	return feeds, fetches, ops, nil
 }
 
+// convertTFToTransport converts an array of aliases and a corresponding tensors
+// to a packed TTP transport.
 func convertTFToTransport(order []string, tensors []*tf.Tensor) (ttp.Transport, error) {
 	if len(order) != len(tensors) {
 		return ttp.Transport{}, fmt.Errorf("length of order does not match the supplied tensors to convert to TTP")
@@ -61,6 +66,8 @@ func convertTFToTransport(order []string, tensors []*tf.Tensor) (ttp.Transport, 
 	return transport, nil
 }
 
+// tfTypeToTtp is a helper function that converts a tf data type
+// to a TTP type. Driven by a simple switch statement.
 func tfTypeToTtp(dataType tf.DataType) (ttp.Type, error) {
 	switch dataType {
 	case tf.Float:
@@ -110,6 +117,8 @@ func tfTypeToTtp(dataType tf.DataType) (ttp.Type, error) {
 	}
 }
 
+// ttpTypeToTf is a helper function that converts a TTP data type
+// to a TensorFlow type.
 func ttpTypeToTf(dataType ttp.Type) (tf.DataType, error) {
 	switch dataType.String() {
 	case "FLOAT":

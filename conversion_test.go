@@ -29,3 +29,36 @@ func TestConvertTFToTransport(t *testing.T) {
 		t.Error("the generated TTP transport did not match target for float array")
 	}
 }
+
+// func TestConvertTransportToTF(t *testing.T) {
+// 	model, err := NewModel("testing/graph.pb")
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+// 	target := Target{
+// 		Name:    "predict",
+// 		Feeds:   []string{"input"},
+// 		Fetches: []string{"output"},
+// 	}
+// 	model.RegisterTargets(target)
+// 	sess, err := model.NewSession()
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+// 	err = sess.Init()
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+// 	// In this example we will convert native go types to a TTP transport.
+// 	tensors := map[string]interface{}{
+// 		"input": [][][]float32{{{1}}, {{2}}, {{3}}},
+// 	}
+
+// 	// PackTransport takes a target and a map of tensor aliases and interfaces.
+// 	transport, err := PackTransport("predict", tensors)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+
+// 	feeds, fetches, operations, err := model.convertTransportToTF(transport)
+// }

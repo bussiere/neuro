@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
-	ttp "github.com/tensortask/ttp/gen"
+	ttp "github.com/tensortask/ttp/go"
 )
 
 // Run executes a TensorFlow model using the TTP standard. Feeds are
@@ -12,8 +12,8 @@ import (
 // which operation's to run and which feeds to return. Targets are registered
 // with the RegisterTarget function. Registered Targets automatically validate
 // input tensor aliases/dimensions/types.
-func (s *Session) Run(transport ttp.Transport) (ttp.Transport, error) {
-	feeds, fetches, operations, err := s.model.convertTransportToTF(transport)
+func (s *Session) Run(input ttp.Transport) (ttp.Transport, error) {
+	feeds, fetches, operations, err := s.model.convertTransportToTF(input)
 	if err != nil {
 		return ttp.Transport{}, err
 	}
@@ -61,8 +61,8 @@ func (s *Session) NewPartialRun(targetNames ...string) (PartialRun, error) {
 
 // Run executes a graph AND saves the graph's state. This is useful for closed
 // feedback loops or forward spikes.
-func (pr *PartialRun) Run(transport ttp.Transport) (ttp.Transport, error) {
-	feeds, fetches, operations, err := pr.model.convertTransportToTF(transport)
+func (pr *PartialRun) Run(input ttp.Transport) (ttp.Transport, error) {
+	feeds, fetches, operations, err := pr.model.convertTransportToTF(input)
 	if err != nil {
 		return ttp.Transport{}, err
 	}

@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
-	ttp "github.com/tensortask/ttp/gen"
+	ttp "github.com/tensortask/ttp/go"
 )
 
 // convertTransportToTF takes a TTP transport and returns maps containing

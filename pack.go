@@ -2,7 +2,7 @@ package neuro
 
 import (
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
-	ttp "github.com/tensortask/ttp/gen"
+	ttp "github.com/tensortask/ttp/go"
 )
 
 // PackTransport takes a target and a map of aliases and native types

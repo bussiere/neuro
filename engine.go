@@ -2,6 +2,8 @@ package neuro
 
 import (
 	"fmt"
+
+	ttp "github.com/tensortask/ttp/go"
 )
 
 // Engine consolidates all models into a single execution
@@ -61,4 +63,9 @@ func (e *Engine) RegisterTarget(model *Model, name string) error {
 // to switch from default.
 func (e *Engine) ToggleOverwrite(overwritable bool) {
 	e.overwritable = overwritable
+}
+
+func (e *Engine) Run(input ttp.Transport) (ttp.Transport, error) {
+	e.targets[input.Target].targets[input.Target].runHandler.Run(input)
+
 }

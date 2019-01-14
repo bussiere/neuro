@@ -19,6 +19,7 @@ type Target struct {
 	Feeds      []string
 	Fetches    []string
 	Operations []string
+	RunHandler RunInterface
 }
 
 type target struct {
@@ -26,6 +27,7 @@ type target struct {
 	feeds      map[string]output
 	fetches    map[string]output
 	operations []*tf.Operation
+	runHandler RunInterface
 }
 
 type output struct {
@@ -49,9 +51,10 @@ func (m *Model) RegisterTargets(targets ...Target) error {
 
 	for _, inputTarget := range targets {
 		t := target{
-			name:    inputTarget.Name,
-			feeds:   make(map[string]output),
-			fetches: make(map[string]output),
+			name:       inputTarget.Name,
+			feeds:      make(map[string]output),
+			fetches:    make(map[string]output),
+			runHandler: inputTarget.RunHandler,
 		}
 		ops, err := m.makeTFOperations(inputTarget.Operations, nodeMap)
 		if err != nil {

@@ -25,6 +25,7 @@
 ```diff
 - #############################
 - #       ALPHA PACKAGE       #
+- #     NO UNIT TESTS (YET)   #
 - #############################
 ```
 
@@ -145,3 +146,8 @@ func main() {
 	fmt.Println(result)
 }
 ```
+
+## How to contribute
+
+1) High quality unit tests
+2) Well commented examples (add to seperate directory)

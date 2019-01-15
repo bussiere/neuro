@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
-	"github.com/tensortask/tfprotos/core/framework"
+	framework "github.com/tensortask/gotfpb/core/framework"
 )
 
 // Target contains the lists of names required to parse out

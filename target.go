@@ -127,7 +127,7 @@ func (m *Model) makeTFOutputs(outputNames []string, nodeMap map[string]*framewor
 			}
 			outputMap[outputName] = output
 		} else {
-			return nil, fmt.Errorf("ouput '%s' is not present in graph '%s'", outputName, m.graphPath)
+			return nil, fmt.Errorf("output '%s' is not present in graph '%s'", outputName, m.graphPath)
 		}
 	}
 	// validation and stuff

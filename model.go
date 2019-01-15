@@ -6,7 +6,7 @@ import (
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
-// Model holds the tensorflow graph, session, variable initalization op,
+// Model holds the tensorflow graph, session, variable initialization op,
 // checkpoint details, restore op, and registered targets.
 type Model struct {
 	graphPath             string

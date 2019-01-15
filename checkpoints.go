@@ -10,7 +10,7 @@ import (
 
 // Checkpoint saves the model's state to a checkpoint file. This operation
 // automatically increments the checkpoint index. The checkpoint diretory and
-// file prefix must be set at model initalization.
+// file prefix must be set at model initialization.
 func (s *Session) Checkpoint() error {
 	checkpointPath, err := filepath.Abs(filepath.Join(s.model.checkpointDirectory, s.model.checkpointPrefix))
 	if err != nil {
@@ -31,7 +31,7 @@ func (s *Session) Checkpoint() error {
 
 // Restore loads a models state from the latest checkpoint. Returns an error if
 // the checkpoint directory/prefix does not exist. The restore op is configured at
-// model initalization.
+// model initialization.
 func (s *Session) Restore() error {
 	_, err := os.Stat(s.model.checkpointDirectory)
 	if os.IsNotExist(err) {
@@ -79,7 +79,7 @@ func (s *Session) Init() error {
 
 // Checkpoint saves the model's state to a checkpoint file. This operation
 // automatically increments the checkpoint index. The checkpoint diretory and
-// file prefix must be set at model initalization.
+// file prefix must be set at model initialization.
 func (pr *PartialRun) Checkpoint() error {
 	checkpointPath, err := filepath.Abs(filepath.Join(pr.model.checkpointDirectory, pr.model.checkpointPrefix))
 	if err != nil {
@@ -100,7 +100,7 @@ func (pr *PartialRun) Checkpoint() error {
 
 // Restore loads a models state from the latest checkpoint. Returns an error if
 // the checkpoint directory/prefix does not exist. The restore op is configured at
-// model initalization.
+// model initialization.
 func (pr *PartialRun) Restore() error {
 	_, err := os.Stat(pr.model.checkpointDirectory)
 	if os.IsNotExist(err) {

@@ -8,7 +8,7 @@ import (
 )
 
 // Run executes a TensorFlow model using the TTP standard. Feeds are
-// included in the TTP transport's "tensors" field. The target specifices
+// included in the TTP transport's "tensors" field. The target specifics
 // which operation's to run and which feeds to return. Targets are registered
 // with the RegisterTarget function. Registered Targets automatically validate
 // input tensor aliases/dimensions/types.

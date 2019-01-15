@@ -38,7 +38,7 @@
 
 ### Golang Dependencies
 
-Neuro depends on a number of [external Golang dependencies](./go.sum), and uses [go modules][9] to manage them. Go modules are currently an experimental opt-in feature in Go 1.11 (see installation instructions [here][10].
+Neuro depends on a number of [external Golang dependencies](./go.sum), and uses [go modules][9] to manage them. Go modules are currently an experimental opt-in feature in Go 1.11 (see installation instructions [here][10]).
 
 To satisfy dependencies: 
 1) ensure that `GO111MODULE=on` and `go version` >= 1.11

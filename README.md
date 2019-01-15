@@ -151,3 +151,11 @@ func main() {
 
 1) High quality unit tests
 2) Well commented examples (add to seperate directory)
+
+## Connect w/ TensorTask
+
+If you want to be notified of TensorTask's developments, sign up to our notification email list. We will only contact you regarding project updates.
+
+<a href="http://eepurl.com/gaWZPP">
+<img width="125" alt="TensorTask Release Notification" src="https://storage.googleapis.com/tensortask-static/signup.png">
+</a>
